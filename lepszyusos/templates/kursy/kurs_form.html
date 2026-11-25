@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}{{ tytul }} | LepszyUSOS{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h1 class="h5 mb-0">{{ tytul }}</h1></div>
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}{% include '_form_field.html' %}{% endfor %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Zapisz</button>
+                        <a href="{% if kurs %}{% url 'szczegoly_kursu' kurs.pk %}{% else %}{% url 'panel_prowadzacego' %}{% endif %}" class="btn btn-outline-secondary">Anuluj</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

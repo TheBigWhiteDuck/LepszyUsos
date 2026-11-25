@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # aplikacje projektu
     'accounts',
+    'kursy',
 ]
 
 MIDDLEWARE = [

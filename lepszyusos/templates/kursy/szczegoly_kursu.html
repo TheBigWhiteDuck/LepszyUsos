@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}{{ kurs.nazwa }} | LepszyUSOS{% endblock %}
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'panel_prowadzacego' %}" class="text-decoration-none small">
+        <i class="bi bi-arrow-left"></i> Powrót do listy kursów
+    </a>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
+        <div>
+            <span class="badge text-bg-secondary mb-1">{{ kurs.kod }}</span>
+            <span class="badge {{ kurs.kolor_formy }} mb-1">{{ kurs.get_forma_zajec_display }}</span>
+            <span class="text-muted small ms-2">
+                Semestr: {{ kurs.semestr }} · {{ kurs.ects }} ECTS · {{ kurs.liczba_godzin }} godz.
+            </span>
+            <h1 class="h4 mb-2">{{ kurs.nazwa }}</h1>
+            {% if kurs.opis %}
+            <p class="text-muted mb-0">{{ kurs.opis|linebreaksbr }}</p>
+            {% endif %}
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'edytuj_kurs' kurs.pk %}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-pencil me-1"></i>Edytuj kurs
+            </a>
+            <a href="{% url 'usun_kurs' kurs.pk %}" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-trash me-1"></i>Usuń
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h2 class="h6 mb-0">Przypisz studenta</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}{% include '_form_field.html' %}{% endfor %}
+                    <button type="submit" class="btn btn-primary w-100" {% if kurs.czy_pelny %}disabled{% endif %}>
+                        Dodaj do kursu
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h2 class="h6 mb-0">Zapisani studenci</h2>
+                <span class="badge text-bg-primary">{{ kurs.liczba_studentow }} / {{ kurs.limit_miejsc }}</span>
+            </div>
+            <div class="card-body p-0">
+                {% if studenci %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nr albumu</th>
+                                <th>Imię i nazwisko</th>
+                                <th>E-mail</th>
+                                <th class="text-end">Akcja</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in studenci %}
+                            <tr>
+                                <td><code>{{ s.nr_albumu }}</code></td>
+                                <td>{{ s.get_full_name }}</td>
+                                <td class="text-muted small">{{ s.email }}</td>
+                                <td class="text-end">
+                                    <form method="post" action="{% url 'wypisz_studenta' kurs.pk s.pk %}"
+                                        class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Wypisz</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-4 mb-0">Brak zapisanych studentów na tym kursie.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

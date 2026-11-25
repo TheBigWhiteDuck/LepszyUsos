@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Moje kursy | LepszyUSOS{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Moje kursy</h1>
+    <a href="{% url 'dodaj_kurs' %}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i>Dodaj kurs
+    </a>
+</div>
+
+{% if kursy %}
+<div class="row g-3">
+    {% for kurs in kursy %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <span class="badge text-bg-secondary">{{ kurs.kod }}</span>
+                        <span class="badge {{ kurs.kolor_formy }}">{{ kurs.get_forma_zajec_display }}</span>
+                    </div>
+                    <span class="text-muted small">{{ kurs.semestr }}</span>
+                </div>
+                <h2 class="h5 card-title">{{ kurs.nazwa }}</h2>
+                <p class="text-muted small mb-1">
+                    <strong>{{ kurs.ects }} ECTS</strong> · {{ kurs.liczba_godzin }} godz.
+                </p>
+                <p class="text-muted small mb-3">
+                    Zapisani studenci: <strong>{{ kurs.liczba_studentow }} / {{ kurs.limit_miejsc }}</strong>
+                </p>
+                <div class="mt-auto d-flex gap-2">
+                    <a href="{% url 'szczegoly_kursu' kurs.pk %}" class="btn btn-outline-primary btn-sm flex-grow-1">
+                        Zarządzaj
+                    </a>
+                    <a href="{% url 'edytuj_kurs' kurs.pk %}" class="btn btn-outline-secondary btn-sm" title="Edytuj">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'usun_kurs' kurs.pk %}" class="btn btn-outline-danger btn-sm" title="Usuń">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card shadow-sm">
+    <div class="card-body text-center py-5">
+        <p class="text-muted mb-3">Nie prowadzisz jeszcze żadnych kursów.</p>
+        <a href="{% url 'dodaj_kurs' %}" class="btn btn-primary">Utwórz pierwszy kurs</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
